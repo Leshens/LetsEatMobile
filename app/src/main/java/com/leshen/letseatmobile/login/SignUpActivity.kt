@@ -1,4 +1,4 @@
-package com.leshen.letseatmobile
+package com.leshen.letseatmobile.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.leshen.letseatmobile.BaseActivity
+import com.leshen.letseatmobile.MainActivity
 import com.leshen.letseatmobile.databinding.ActivitySignUpBinding
 
 class SignUpActivity : BaseActivity() {
@@ -23,7 +25,7 @@ class SignUpActivity : BaseActivity() {
         auth = Firebase.auth
 
         binding?.tvLoginPage?.setOnClickListener {
-            startActivity(Intent(this,SignInActivity::class.java))
+            startActivity(Intent(this, SignInActivity::class.java))
             finish()
         }
 
@@ -32,7 +34,7 @@ class SignUpActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(this,SignInActivity::class.java))
+        startActivity(Intent(this, SignInActivity::class.java))
         finish()
     }
 
@@ -54,7 +56,7 @@ class SignUpActivity : BaseActivity() {
 //                        val userInfo = User(firebaseUser?.uid,name,firebaseUser?.email,image)
 //                        FireStoreClass().registerUser(userInfo)
                         Toast.makeText(this,"Registration Successful", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this,MainActivity::class.java))
+                        startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }
                     else
