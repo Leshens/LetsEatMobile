@@ -11,7 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.leshen.letseatmobile.databinding.ActivityMainBinding
 import com.leshen.letseatmobile.login.GetStartedActivity
 
-class  : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding? = null
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
