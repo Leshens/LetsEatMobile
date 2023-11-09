@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -65,6 +66,14 @@ dependencies {
     implementation ("com.google.maps.android:android-maps-utils:2.3.0")
     implementation ("com.google.maps.android:maps-utils-ktx:3.4.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    implementation("io.ktor:ktor-client-core:2.3.5")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
+
+    api("dev.icerock.moko:mvvm-core:0.16.1")
+    api("dev.icerock.moko:mvvm-compose:0.16.1")
 
     implementation ("com.karumi:dexter:6.2.3")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
@@ -74,4 +83,10 @@ dependencies {
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+
+    api("androidx.activity:activity-compose:1.7.2")
+    api("androidx.appcompat:appcompat:1.6.1")
+    api("androidx.core:core-ktx:1.10.1")
+    implementation("io.ktor:ktor-client-android:2.3.5")
+
 }

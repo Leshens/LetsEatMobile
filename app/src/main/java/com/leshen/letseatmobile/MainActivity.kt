@@ -13,7 +13,7 @@ import com.leshen.letseatmobile.login.GetStartedActivity
 
 class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding? = null
-    private lateinit var auth: FirebaseAuth
+    lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,15 +36,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
         binding?.signOutButton?.setOnClickListener {
-            if (auth.currentUser!= null) {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, GetStartedActivity::class.java)
-                startActivity(intent)
-            }
+            signOut(auth)
 
         }
     }
-
+    fun signOut(auth: FirebaseAuth){
+        if (auth.currentUser!= null) {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, GetStartedActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
     private fun replaceFragment(fragment : Fragment){
 
