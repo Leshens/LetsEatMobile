@@ -1,4 +1,4 @@
-package com.leshen.letseatmobile
+package com.leshen.letseatmobile.login
 
 import android.app.Activity
 import android.content.Intent
@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.leshen.letseatmobile.BaseActivity
+import com.leshen.letseatmobile.MainActivity
+import com.leshen.letseatmobile.R
 import com.leshen.letseatmobile.databinding.ActivitySignInBinding
 
 
@@ -34,12 +37,12 @@ class SignInActivity : BaseActivity() {
         googleSignInClient = GoogleSignIn.getClient(this,gso)
 
         binding?.tvRegister?.setOnClickListener {
-            startActivity(Intent(this,SignUpActivity::class.java))
+            startActivity(Intent(this, SignUpActivity::class.java))
             finish()
         }
 
         binding?.tvForgotPassword?.setOnClickListener {
-            startActivity(Intent(this,ForgetPasswordActivity::class.java))
+            startActivity(Intent(this, ForgetPasswordActivity::class.java))
         }
 
         binding?.btnSignIn?.setOnClickListener {
@@ -62,7 +65,7 @@ class SignInActivity : BaseActivity() {
                 .addOnCompleteListener(this){task->
                     if (task.isSuccessful)
                     {
-                        startActivity(Intent(this,MainActivity::class.java))
+                        startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }
                     else
@@ -110,7 +113,7 @@ class SignInActivity : BaseActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener{
             if (it.isSuccessful)
             {
-                startActivity(Intent(this,MainActivity::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
             else

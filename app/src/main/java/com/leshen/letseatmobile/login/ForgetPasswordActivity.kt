@@ -1,4 +1,4 @@
-package com.leshen.letseatmobile
+package com.leshen.letseatmobile.login
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -6,6 +6,7 @@ import android.util.Patterns
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.leshen.letseatmobile.BaseActivity
 import com.leshen.letseatmobile.databinding.ActivityForgetPasswordBinding
 
 class ForgetPasswordActivity : BaseActivity() {

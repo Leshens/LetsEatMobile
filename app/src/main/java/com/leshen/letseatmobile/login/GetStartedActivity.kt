@@ -1,10 +1,11 @@
-package com.leshen.letseatmobile
+package com.leshen.letseatmobile.login
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.leshen.letseatmobile.MainActivity
 import com.leshen.letseatmobile.databinding.ActivityGetStartedBinding
 
 class GetStartedActivity : AppCompatActivity() {
@@ -17,12 +18,12 @@ class GetStartedActivity : AppCompatActivity() {
         setContentView(binding?.root)
 
         binding?.cvGetStarted?.setOnClickListener {
-            startActivity(Intent(this,SignInActivity::class.java))
+            startActivity(Intent(this, SignInActivity::class.java))
             finish()
         }
         val auth = Firebase.auth
         if (auth.currentUser!= null){
-            startActivity(Intent(this,MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
