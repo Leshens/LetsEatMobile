@@ -61,7 +61,7 @@ dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation ("com.google.android.libraries.places:places:3.2.0")
+    implementation ("com.google.android.libraries.places:places:3.3.0")
 
     implementation ("com.google.maps.android:android-maps-utils:2.3.0")
     implementation ("com.google.maps.android:maps-utils-ktx:3.4.0")
@@ -84,9 +84,9 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
 
-    api("androidx.activity:activity-compose:1.7.2")
+    api("androidx.activity:activity-compose:1.8.1")
     api("androidx.appcompat:appcompat:1.6.1")
-    api("androidx.core:core-ktx:1.10.1")
+    api("androidx.core:core-ktx:1.12.0")
     implementation("io.ktor:ktor-client-android:2.3.5")
 
 }

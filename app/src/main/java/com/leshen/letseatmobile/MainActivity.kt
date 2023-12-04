@@ -3,11 +3,10 @@ package com.leshen.letseatmobile
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.leshen.letseatmobile.databinding.ActivityMainBinding
 import com.leshen.letseatmobile.login.GetStartedActivity
 
@@ -19,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         replaceFragment(Home())
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
 
         binding!!.bottomNavigationView.setOnItemSelectedListener {
 
@@ -35,10 +34,9 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-        binding?.signOutButton?.setOnClickListener {
-            signOut(auth)
-
-        }
+    }
+    fun wyloguj(view: View) {
+        signOut(auth)
     }
     fun signOut(auth: FirebaseAuth){
         if (auth.currentUser!= null) {
@@ -47,7 +45,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
     private fun replaceFragment(fragment : Fragment){
 
         val fragmentManager = supportFragmentManager
