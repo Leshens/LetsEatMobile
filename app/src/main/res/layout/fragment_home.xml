@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foregroundTint="@color/teal_200"
@@ -9,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="887dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,51 +44,19 @@
                 android:background="@drawable/baseline_filter_list_24" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/filterLayoutHome"
+        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/searchButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:layout_weight="0"
-                android:foreground="@drawable/baseline_search_24"
-                android:foregroundGravity="fill"
-                app:iconTint="#000000" />
-
-            <Button
-                android:id="@+id/włoskieButton"
-                style="?attr/materialButtonOutlinedStyle"
+            <LinearLayout
+                android:id="@+id/filterLayoutHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Włoskie"
-                android:textColor="@color/black" />
+                android:orientation="horizontal">
+                <!-- Your category buttons will be added here dynamically -->
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/polskieButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Polskie"
-                android:textColor="@color/black" />
-
-            <Button
-                android:id="@+id/chinskieButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Chińskie"
-                android:textColor="@color/black" />
-
-        </LinearLayout>
+        </HorizontalScrollView>
 
         <TextView
             android:id="@+id/textHome"
@@ -103,15 +73,17 @@
         <LinearLayout
             android:id="@+id/restaurantsLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/restaurant_1"
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                />
+                android:layout_height="match_parent">
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
+
     </LinearLayout>
-</FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
