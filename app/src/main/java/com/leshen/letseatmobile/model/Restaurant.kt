@@ -5,5 +5,4 @@ import kotlinx.serialization.Serializable
 data class Restaurant (
     val Name: String,
     val category: String,
-    val path: String
 )

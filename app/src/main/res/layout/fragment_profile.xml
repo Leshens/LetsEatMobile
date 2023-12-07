@@ -64,7 +64,8 @@
             android:text="Wyloguj"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="wyloguj"/>
 
         <TextView
             android:layout_width="match_parent"
