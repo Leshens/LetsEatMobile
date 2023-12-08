@@ -66,6 +66,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Restaurant Name, Location"
+                android:textColor="@color/soft_black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
             <LinearLayout

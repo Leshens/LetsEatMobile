@@ -67,7 +67,8 @@
             android:text="Z nami znajdziesz miejsce w restauracji!"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textSize="34sp"
+            android:textColor="@color/soft_black"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <LinearLayout

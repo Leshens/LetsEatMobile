@@ -2,9 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.LetsEatMobile" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/teal_200</item>
+        <item name="android:textColor">@color/soft_black</item>
     </style>
 
     <style name="Theme.LetsEatMobile" parent="Base.Theme.LetsEatMobile" >
         <item name="colorPrimary">@color/teal_200</item>
+        <item name="android:textColor">@color/soft_black</item>
     </style>
 </resources>
