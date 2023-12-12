@@ -1,7 +1,9 @@
 package com.leshen.letseatmobile
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.TextView
 
 class RestaurantPanelActivity : AppCompatActivity() {
@@ -13,8 +15,18 @@ class RestaurantPanelActivity : AppCompatActivity() {
         val restaurantId = intent.getIntExtra("restaurantId", -1)
         val restaurantName = intent.getStringExtra("restaurantName")
 
-        // Use the data as needed
+        // Data from panel
         val restaurantNameTextView = findViewById<TextView>(R.id.restaurantPanelRestaurantName)
+        val backbutton = findViewById<ImageButton>(R.id.restaurantPanelReturnButton)
+
+        // Data functions
         restaurantNameTextView.text = restaurantName
+
+        backbutton.setOnClickListener {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            finish()
+        }
+
     }
 }
