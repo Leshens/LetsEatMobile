@@ -1,5 +1,6 @@
 package com.leshen.letseatmobile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.leshen.letseatmobile.API.ApiService
 import com.leshen.letseatmobile.API.RestaurantAdapter
+import com.leshen.letseatmobile.API.RestaurantModel
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +27,7 @@ class Home : Fragment() {
     private lateinit var filterLayoutHome: LinearLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RestaurantAdapter
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout // Dodaj to
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -39,13 +41,30 @@ class Home : Fragment() {
 
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = RestaurantAdapter(emptyList())
+
+        // Create an instance of your item click listener
+        val itemClickListener = object : RestaurantAdapter.OnItemClickListener {
+            override fun onItemClick(restaurantModel: RestaurantModel) {
+                // Use an explicit intent to start RestaurantPanelActivity
+                val intent = Intent(requireContext(), RestaurantPanelActivity::class.java)
+                // Pass any necessary data to the activity
+                intent.putExtra("restaurantId", restaurantModel.restaurantId)
+                intent.putExtra("restaurantName", restaurantModel.restaurantName)
+                startActivity(intent)
+            }
+
+            override fun onFavoriteButtonClick(restaurantId: Int) {
+                // Handle favorite button click if needed
+            }
+        }
+
+        // Pass the item click listener to your adapter
+        adapter = RestaurantAdapter(emptyList(), itemClickListener)
         recyclerView.adapter = adapter
 
         filterLayoutHome = binding.filterLayoutHome
-        swipeRefreshLayout = binding.swipeRefreshLayout // Dodaj to
+        swipeRefreshLayout = binding.swipeRefreshLayout
 
-        // Dodaj obsługę odświeżania
         swipeRefreshLayout.setOnRefreshListener {
             fetchDataFromApi()
         }
@@ -67,28 +86,24 @@ class Home : Fragment() {
                 val restaurants = apiService.getRestaurants()
                 withContext(Dispatchers.Main) {
                     adapter.updateData(restaurants)
-                    swipeRefreshLayout.isRefreshing = false // Zatrzymaj odświeżanie
+                    swipeRefreshLayout.isRefreshing = false
 
-                    // Extract unique categories from the restaurant list
                     val uniqueCategories = restaurants.mapNotNull { it.restaurantCategory }.distinct()
                     generateCategoryButtons(uniqueCategories)
                 }
             } catch (e: Exception) {
-                // Obsłuż błędy, np. pokaż komunikat o błędzie
                 e.printStackTrace()
             }
         }
     }
 
-
     private fun filterByCategory(category: String) {
         adapter.filterByCategory(category)
     }
+
     private fun generateCategoryButtons(categories: List<String>) {
-        // Usuń wcześniej istniejące przyciski
         filterLayoutHome.removeAllViews()
 
-        // Implementuj logikę do dynamicznego generowania przycisków kategorii
         for (category in categories) {
             val button = Button(requireContext())
             button.text = category
