@@ -39,6 +39,7 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    buildToolsVersion = "29.0.2"
 }
 
 dependencies {
@@ -51,6 +52,9 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation ("androidx.fragment:fragment-ktx:1.6.2")
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     implementation (platform("com.google.firebase:firebase-bom:31.5.0"))
 
     implementation ("com.google.firebase:firebase-auth-ktx")

@@ -2,6 +2,8 @@ package com.leshen.letseatmobile
 
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +35,8 @@ class Profile : Fragment() {
         val myTextView: TextView = view.findViewById(R.id.helloText)
         myTextView.text = "Hej, $username"
 
-        return view
-    }
 
-    fun wyloguj(view: View) {
-        (activity as MainActivity).signOut(auth)
+        return view
     }
 }
 
