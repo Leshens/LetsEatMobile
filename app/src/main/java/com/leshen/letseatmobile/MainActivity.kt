@@ -3,23 +3,27 @@ package com.leshen.letseatmobile
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.leshen.letseatmobile.databinding.ActivityMainBinding
+import com.leshen.letseatmobile.location.LocationService
 import com.leshen.letseatmobile.login.GetStartedActivity
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding? = null
     lateinit var auth: FirebaseAuth
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
         Log.d(TAG, "onCreate: MainActivity")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -38,6 +42,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
+        }
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            startService(this)
         }
     }
     fun wyloguj(view: View) {
@@ -63,7 +71,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            startService(this)
+        }
         super.onDestroy()
         binding = null
+    }
+    private fun getAddress(latLng: LatLng): String {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        val address: Address?
+        var addressText = ""
+
+        val addresses: List<Address>? =
+            geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+
+        if (addresses != null) {
+            if (addresses.isNotEmpty()) {
+                address = addresses[0]
+                addressText = address.getAddressLine(0)
+            } else{
+                addressText = "its not appear"
+            }
+        }
+        return addressText
     }
 }

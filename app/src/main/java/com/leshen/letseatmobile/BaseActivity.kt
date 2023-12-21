@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 open class BaseActivity : AppCompatActivity() {
     private lateinit var pb:Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         Log.d("LitanyOfIgnition", "The soul of the Machine God surrounds thee.")

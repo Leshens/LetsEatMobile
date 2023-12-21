@@ -1,12 +1,13 @@
-package com.leshen.letseatmobile.API
+package com.leshen.letseatmobile.restautrant
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.leshen.letseatmobile.R
 
 class RestaurantAdapter(
@@ -38,10 +39,10 @@ class RestaurantAdapter(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardView: CardView = itemView.findViewById(R.id.listCardView)
         val tablesTextView: TextView = itemView.findViewById(R.id.listRestaurantTables)
         val favoriteButton: ImageButton = itemView.findViewById(R.id.listFavoriteButton)
         val nameTextView: TextView = itemView.findViewById(R.id.listRestaurantName)
+        val restaurantPictureImageView: ImageView = itemView.findViewById(R.id.listRestaurantPicture)
         val starTextView: TextView = itemView.findViewById(R.id.listRestaurantStar)
         val distanceTextView: TextView = itemView.findViewById(R.id.listRestaurantDistance)
         val timeTextView: TextView = itemView.findViewById(R.id.listRestaurantTime)
@@ -61,10 +62,18 @@ class RestaurantAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val restaurant = filteredList[position]
-
-        holder.nameTextView.text = restaurant.restaurantName
         // Set data to views
+        holder.nameTextView.text = restaurant.restaurantName
+        holder.timeTextView.text = restaurant.openingHours
         holder.tablesTextView.text = "1 stolik(2 os.) \n2 stolik(4 os.)"
+
+        // Load the restaurant picture using Glide
+        Glide.with(holder.itemView.context)
+            .load(restaurant.photoLink)  // Replace with the actual image URL
+            .placeholder(R.drawable.template_restauracja)  // Placeholder image while loading
+            .error(R.drawable.template_restauracja)  // Image to display in case of an error
+            .centerCrop()
+            .into(holder.restaurantPictureImageView)
 
         // Set the favorite state for the current position
         favoriteStates[position] = false

@@ -1,4 +1,4 @@
-package com.leshen.letseatmobile.Category
+package com.leshen.letseatmobile.category
 
 import android.view.LayoutInflater
 import android.view.View

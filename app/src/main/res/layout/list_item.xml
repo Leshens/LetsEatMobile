@@ -16,10 +16,16 @@
         android:orientation="vertical"
         >
         <RelativeLayout
-            android:id="@+id/listRestaurantPicture"
+            android:id="@+id/listRestaurantPictureCard"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@drawable/template_restauracja">
+
+            <ImageView
+                android:id="@+id/listRestaurantPicture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
 
             <TextView
                 android:id="@+id/listRestaurantTables"
@@ -67,7 +73,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Restaurant Name, Location"
+                android:text="Restaurant Name"
                 android:textSize="20sp"
                 android:textStyle="bold" />
             <LinearLayout

@@ -28,7 +28,6 @@
             android:background="@android:color/transparent"
             android:text="Mój profil"
             android:textAlignment="viewStart"
-            android:textColor="@color/black"
             android:textSize="24sp"
             android:layout_weight="1"/>
 
@@ -39,7 +38,6 @@
             android:background="@android:color/transparent"
             android:text="Uprawnienia Dostępu"
             android:textAlignment="viewStart"
-            android:textColor="@color/black"
             android:textSize="24sp"
             android:layout_weight="1"/>
 
@@ -50,7 +48,6 @@
             android:background="@android:color/transparent"
             android:text="Pomoc"
             android:textAlignment="viewStart"
-            android:textColor="@color/black"
             android:textSize="24sp"
             android:layout_weight="1"/>
 
@@ -58,14 +55,15 @@
             android:id="@+id/signOutButton1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:backgroundTint="@color/lightGrey"
+            android:onClick="wyloguj"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="Wyloguj"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:layout_weight="1"
-            android:onClick="wyloguj"/>
+            android:textColor="@color/Charcoal_Grey"
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
