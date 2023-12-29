@@ -1,6 +1,5 @@
 package com.leshen.letseatmobile
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,8 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -23,13 +24,9 @@ import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
 import com.leshen.letseatmobile.restautrant.RestaurantAdapter
 import com.leshen.letseatmobile.restautrant.RestaurantModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
+import java.util.Locale
+import android.Manifest
+
 
 class Home : Fragment() {
 
@@ -38,13 +35,13 @@ class Home : Fragment() {
     private lateinit var adapter: RestaurantAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var locationButton: Button
-    private var selectedRange = 1
-    private var locationButtonText: String = ""
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val viewModel: HomeViewModel by viewModels()
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 123
@@ -53,7 +50,7 @@ class Home : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
@@ -74,8 +71,8 @@ class Home : Fragment() {
             }
 
             override fun onFavoriteButtonClick(restaurantId: Int) {
+                // Handle favorite button click
             }
-
         }
 
         // Pass the item click listener to your adapter
@@ -89,7 +86,7 @@ class Home : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         swipeRefreshLayout.setOnRefreshListener {
-            fetchDataFromApi()
+            viewModel.fetchDataFromApi()
         }
 
         locationButton.setOnClickListener {
@@ -97,38 +94,30 @@ class Home : Fragment() {
             showRangeSelectorDialog()
         }
 
-        fetchDataFromApi()
+        observeViewModel()
 
         return view
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-        // Update location button with real location
-        checkLocationPermission()
-    }
-    private fun fetchDataFromApi() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val apiService = Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:8080/") // Use the IP address instead of localhost
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(ApiService::class.java)
+    private fun observeViewModel() {
+        viewModel.restaurants.observe(viewLifecycleOwner) { restaurants ->
+            adapter.updateData(restaurants)
+            swipeRefreshLayout.isRefreshing = false
 
-                val restaurants = apiService.getRestaurants()
-                withContext(Dispatchers.Main) {
-                    adapter.updateData(restaurants)
-                    swipeRefreshLayout.isRefreshing = false
+            val uniqueCategories = restaurants.map { it.restaurantCategory }.distinct()
+            generateCategoryButtons(uniqueCategories)
+        }
 
-                    val uniqueCategories = restaurants.map { it.restaurantCategory }.distinct()
-                    generateCategoryButtons(uniqueCategories)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        viewModel.selectedRange.observe(viewLifecycleOwner) { range ->
+            updateLocationButton()
+            Toast.makeText(requireContext(), "Selected range: $range", Toast.LENGTH_SHORT).show()
         }
     }
+
+//    private fun fetchDataFromApi() {
+//        // Move API call logic to ViewModel
+//        viewModel.fetchDataFromApi()
+//    }
 
     private fun filterByCategory(category: String) {
         adapter.filterByCategory(category)
@@ -171,7 +160,7 @@ class Home : Fragment() {
                 val latLng = Pair(location.latitude, location.longitude)
                 val address = getAddressFromLocation(latLng)
 
-                val buttonText = "$address\nw  w promieniu $selectedRange km"
+                val buttonText = "$address\nw  w promieniu ${viewModel.selectedRange.value} km"
                 locationButton.text = buttonText
 
                 Log.d("Location", "Updated location: $address")
@@ -188,17 +177,17 @@ class Home : Fragment() {
         val address = addresses?.getOrNull(0)
         return address?.thoroughfare ?: "Street name not found"
     }
+
     private fun showRangeSelectorDialog() {
         val rangeSelectorDialog = RangeSelectorDialogFragment()
         rangeSelectorDialog.setRangeSelectorListener(object : RangeSelectorDialogFragment.RangeSelectorListener {
             override fun onRangeSelected(range: Int) {
-                selectedRange = range
-                updateLocationButton() // Dodane przekazanie wartości zakresu do metody aktualizującej przycisk lokalizacji
-                Log.d("RangeSelector", "Selected range: $range")
+                viewModel.updateSelectedRange(range)
             }
         })
         rangeSelectorDialog.show(parentFragmentManager, "RangeSelectorDialog")
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

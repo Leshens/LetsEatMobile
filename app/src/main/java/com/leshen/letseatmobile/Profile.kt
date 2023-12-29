@@ -1,6 +1,5 @@
 package com.leshen.letseatmobile
 
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,20 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.leshen.letseatmobile.databinding.FragmentProfileBinding
 
 class Profile : Fragment() {
     private var binding: FragmentProfileBinding? = null
     private lateinit var auth: FirebaseAuth
-    private var userEmail: String? = null
-    private var username: String = ""
+    private lateinit var viewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        userEmail = auth.currentUser?.email
-        username = userEmail?.substringBefore('@') ?: ""
+        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
     @SuppressLint("SetTextI18n")
@@ -29,12 +27,19 @@ class Profile : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile, container, false)
-        val myTextView: TextView = view.findViewById(R.id.helloText)
-        myTextView.text = "Hej, $username"
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        val view = binding?.root
 
+        val myTextView: TextView = view?.findViewById(R.id.helloText) ?: return null
+
+        val userInfo = viewModel.getUserInfo(auth)
+        myTextView.text = "Hej, ${userInfo.username}"
 
         return view
     }
-}
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+}
