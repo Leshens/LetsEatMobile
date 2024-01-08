@@ -1,94 +1,131 @@
 package com.leshen.letseatmobile
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.leshen.letseatmobile.API.ApiService
-import com.leshen.letseatmobile.API.RestaurantAdapter
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.leshen.letseatmobile.restautrant.RestaurantAdapter
+import com.leshen.letseatmobile.restautrant.RestaurantModel
+import java.util.Locale
+import android.Manifest
+
 
 class Home : Fragment() {
 
     private lateinit var filterLayoutHome: LinearLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RestaurantAdapter
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout // Dodaj to
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var locationButton: Button
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val viewModel: HomeViewModel by viewModels()
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 123
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = RestaurantAdapter(emptyList())
+
+        // Create an instance of your item click listener
+        val itemClickListener = object : RestaurantAdapter.OnItemClickListener {
+            override fun onItemClick(restaurantModel: RestaurantModel) {
+                // Use an explicit intent to start RestaurantPanelActivity
+                val intent = Intent(requireContext(), RestaurantPanelActivity::class.java)
+
+                // Pass any necessary data to the activity
+                intent.putExtra("restaurantId", restaurantModel.restaurantId)
+                intent.putExtra("restaurantName", restaurantModel.restaurantName)
+                intent.putExtra("photoLink", restaurantModel.photoLink)
+                startActivity(intent)
+            }
+
+            override fun onFavoriteButtonClick(restaurantId: Int) {
+                // Handle favorite button click
+            }
+        }
+
+        // Pass the item click listener to your adapter
+        adapter = RestaurantAdapter(emptyList(), itemClickListener)
         recyclerView.adapter = adapter
 
         filterLayoutHome = binding.filterLayoutHome
-        swipeRefreshLayout = binding.swipeRefreshLayout // Dodaj to
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        locationButton = binding.locationButton
 
-        // Dodaj obsługę odświeżania
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
         swipeRefreshLayout.setOnRefreshListener {
-            fetchDataFromApi()
+            viewModel.fetchDataFromApi()
         }
 
-        fetchDataFromApi()
+        locationButton.setOnClickListener {
+            checkLocationPermission()
+            showRangeSelectorDialog()
+        }
+
+        observeViewModel()
 
         return view
     }
 
-    private fun fetchDataFromApi() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val apiService = Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:8080/") // Use the IP address instead of localhost
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(ApiService::class.java)
+    private fun observeViewModel() {
+        viewModel.restaurants.observe(viewLifecycleOwner) { restaurants ->
+            adapter.updateData(restaurants)
+            swipeRefreshLayout.isRefreshing = false
 
-                val restaurants = apiService.getRestaurants()
-                withContext(Dispatchers.Main) {
-                    adapter.updateData(restaurants)
-                    swipeRefreshLayout.isRefreshing = false // Zatrzymaj odświeżanie
+            val uniqueCategories = restaurants.map { it.restaurantCategory }.distinct()
+            generateCategoryButtons(uniqueCategories)
+        }
 
-                    // Extract unique categories from the restaurant list
-                    val uniqueCategories = restaurants.mapNotNull { it.restaurantCategory }.distinct()
-                    generateCategoryButtons(uniqueCategories)
-                }
-            } catch (e: Exception) {
-                // Obsłuż błędy, np. pokaż komunikat o błędzie
-                e.printStackTrace()
-            }
+        viewModel.selectedRange.observe(viewLifecycleOwner) { range ->
+            updateLocationButton()
+            Toast.makeText(requireContext(), "Selected range: $range", Toast.LENGTH_SHORT).show()
         }
     }
 
+//    private fun fetchDataFromApi() {
+//        // Move API call logic to ViewModel
+//        viewModel.fetchDataFromApi()
+//    }
 
     private fun filterByCategory(category: String) {
         adapter.filterByCategory(category)
     }
+
     private fun generateCategoryButtons(categories: List<String>) {
-        // Usuń wcześniej istniejące przyciski
         filterLayoutHome.removeAllViews()
 
-        // Implementuj logikę do dynamicznego generowania przycisków kategorii
         for (category in categories) {
             val button = Button(requireContext())
             button.text = category
@@ -99,4 +136,60 @@ class Home : Fragment() {
         }
     }
 
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted, request it
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Permission is already granted, update location
+            updateLocationButton()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun updateLocationButton() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val latLng = Pair(location.latitude, location.longitude)
+                val address = getAddressFromLocation(latLng)
+
+                val buttonText = "$address\nw  w promieniu ${viewModel.selectedRange.value} km"
+                locationButton.text = buttonText
+
+                Log.d("Location", "Updated location: $address")
+            } else {
+                Log.e("Location", "Last location is null")
+            }
+        }
+    }
+
+    private fun getAddressFromLocation(latLng: Pair<Double, Double>): String {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val addresses: List<Address>? = geocoder.getFromLocation(latLng.first, latLng.second, 1)
+
+        val address = addresses?.getOrNull(0)
+        return address?.thoroughfare ?: "Street name not found"
+    }
+
+    private fun showRangeSelectorDialog() {
+        val rangeSelectorDialog = RangeSelectorDialogFragment()
+        rangeSelectorDialog.setRangeSelectorListener(object : RangeSelectorDialogFragment.RangeSelectorListener {
+            override fun onRangeSelected(range: Int) {
+                viewModel.updateSelectedRange(range)
+            }
+        })
+        rangeSelectorDialog.show(parentFragmentManager, "RangeSelectorDialog")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
