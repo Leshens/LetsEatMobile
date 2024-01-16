@@ -43,7 +43,7 @@ class RangeSelectorDialogFragment : DialogFragment() {
                 R.id.radioSmall -> 1
                 R.id.radioMedium -> 2
                 R.id.radioLarge -> 3
-                else -> 0
+                else -> 1
             }
 
             rangeSelectorListener?.onRangeSelected(selectedRange)

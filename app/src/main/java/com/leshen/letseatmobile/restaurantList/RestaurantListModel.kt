@@ -1,15 +1,13 @@
-package com.leshen.letseatmobile.restautrant
+package com.leshen.letseatmobile.restaurantList
 
-data class RestaurantModel(
+data class RestaurantListModel(
     val latitude: Double,
-    val location: String,
     val longitude: Double,
     val openingHours: String,
-    val phoneNumber: String,
     val photoLink: String,
     val restaurantCategory: String,
     val restaurantId: Int,
     val restaurantName: String,
-    val token: String,
-    val websiteLink: String
+    val stars: Int,
+    val tableModels: List<TableModel>
 )

@@ -1,4 +1,4 @@
-package com.leshen.letseatmobile.restautrant
+package com.leshen.letseatmobile.restaurantList
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,31 +10,41 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.leshen.letseatmobile.R
 
-class RestaurantAdapter(
-    var originalList: List<RestaurantModel>,
+class RestaurantListAdapter(
+    var filteredList: List<RestaurantListModel>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<RestaurantAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RestaurantListAdapter.ViewHolder>() {
 
-    private var filteredList: List<RestaurantModel> = originalList
-    private val favoriteStates = mutableMapOf<Int, Boolean>() // Map to store favorite states by position
+    private val favoriteStates = mutableMapOf<Int, Boolean>()
+    private val sizeCountMap = mutableMapOf<Int, Int>()
 
-    fun updateData(newList: List<RestaurantModel>) {
-        originalList = newList
-        filteredList = originalList
+    fun updateData(newList: List<RestaurantListModel>) {
+        filteredList = newList
+        countTableSizes()
         notifyDataSetChanged()
     }
 
     fun filterByCategory(category: String) {
         filteredList = if (category.isNotEmpty()) {
-            originalList.filter { it.restaurantCategory == category }
+            filteredList.filter { it.restaurantCategory == category }
         } else {
-            originalList
+            filteredList
         }
+        countTableSizes()
         notifyDataSetChanged()
     }
 
+    private fun countTableSizes() {
+        sizeCountMap.clear()
+
+        // Use groupingBy and eachCount to count occurrences of each size value
+        sizeCountMap.putAll(filteredList.flatMap { it.tableModels }
+            .groupingBy { it.size }
+            .eachCount())
+    }
+
     interface OnItemClickListener {
-        fun onItemClick(restaurantModel: RestaurantModel)
+        fun onItemClick(restaurantListModel: RestaurantListModel)
         fun onFavoriteButtonClick(restaurantId: Int)
     }
 
@@ -65,13 +75,17 @@ class RestaurantAdapter(
         // Set data to views
         holder.nameTextView.text = restaurant.restaurantName
         holder.timeTextView.text = restaurant.openingHours
-        holder.tablesTextView.text = "1 stolik(2 os.) \n2 stolik(4 os.)"
+        holder.starTextView.text = restaurant.stars.toString()
+
+        // Update tablesTextView with the size and count information
+        val sizeText = generateSizeText(restaurant.tableModels)
+        holder.tablesTextView.text = sizeText
 
         // Load the restaurant picture using Glide
         Glide.with(holder.itemView.context)
-            .load(restaurant.photoLink)  // Replace with the actual image URL
-            .placeholder(R.drawable.template_restauracja)  // Placeholder image while loading
-            .error(R.drawable.template_restauracja)  // Image to display in case of an error
+            .load(restaurant.photoLink)
+            .placeholder(R.drawable.template_restauracja)
+            .error(R.drawable.template_restauracja)
             .centerCrop()
             .into(holder.restaurantPictureImageView)
 
@@ -82,18 +96,22 @@ class RestaurantAdapter(
             val currentState = favoriteStates[position] ?: false
 
             if (currentState) {
-                // If the current state is true, change it to false and set the second icon
                 holder.favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
             } else {
-                // If the current state is false, change it to true and set the first icon
                 holder.favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
             }
-            // Update the favorite state for the current position
             favoriteStates[position] = !currentState
         }
     }
 
     override fun getItemCount(): Int {
         return filteredList.size
+    }
+
+    private fun generateSizeText(tableModels: List<TableModel>): String {
+        // Use groupingBy and eachCount to generate the size text
+        return tableModels.groupingBy { it.size }
+            .eachCount()
+            .entries.joinToString("\n") { (size, count) -> "$count stolik/i($size os.)" }
     }
 }
