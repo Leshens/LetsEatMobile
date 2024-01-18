@@ -22,8 +22,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
-import com.leshen.letseatmobile.restaurant.RestaurantAdapter
-import com.leshen.letseatmobile.restaurant.RestaurantModel
+import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
+import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import java.util.Locale
 import android.Manifest
 
@@ -32,7 +32,7 @@ class Home : Fragment() {
 
     private lateinit var filterLayoutHome: LinearLayout
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: RestaurantAdapter
+    private lateinit var adapter: RestaurantListAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var locationButton: Button
 
@@ -58,15 +58,13 @@ class Home : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Create an instance of your item click listener
-        val itemClickListener = object : RestaurantAdapter.OnItemClickListener {
-            override fun onItemClick(restaurantModel: RestaurantModel) {
+        val itemClickListener = object : RestaurantListAdapter.OnItemClickListener {
+            override fun onItemClick(restaurantModel: RestaurantListModel) {
                 // Use an explicit intent to start RestaurantPanelActivity
                 val intent = Intent(requireContext(), RestaurantPanelActivity::class.java)
 
                 // Pass any necessary data to the activity
                 intent.putExtra("restaurantId", restaurantModel.restaurantId)
-                intent.putExtra("restaurantName", restaurantModel.restaurantName)
-                intent.putExtra("photoLink", restaurantModel.photoLink)
                 startActivity(intent)
             }
 
@@ -76,7 +74,7 @@ class Home : Fragment() {
         }
 
         // Pass the item click listener to your adapter
-        adapter = RestaurantAdapter(emptyList(), itemClickListener)
+        adapter = RestaurantListAdapter(emptyList(), itemClickListener)
         recyclerView.adapter = adapter
 
         filterLayoutHome = binding.filterLayoutHome
@@ -113,11 +111,6 @@ class Home : Fragment() {
             Toast.makeText(requireContext(), "Selected range: $range", Toast.LENGTH_SHORT).show()
         }
     }
-
-//    private fun fetchDataFromApi() {
-//        // Move API call logic to ViewModel
-//        viewModel.fetchDataFromApi()
-//    }
 
     private fun filterByCategory(category: String) {
         adapter.filterByCategory(category)
@@ -162,7 +155,8 @@ class Home : Fragment() {
 
                 val buttonText = "$address\nw  w promieniu ${viewModel.selectedRange.value} km"
                 locationButton.text = buttonText
-
+                viewModel.updateLatitude(location.latitude)
+                viewModel.updateLongitude(location.longitude)
                 Log.d("Location", "Updated location: $address")
             } else {
                 Log.e("Location", "Last location is null")
