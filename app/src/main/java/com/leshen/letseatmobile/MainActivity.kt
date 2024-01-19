@@ -3,6 +3,8 @@ package com.leshen.letseatmobile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun wyloguj() {
+    fun wyloguj(view: View) {
         viewModel.signOut(this, auth)
     }
 
@@ -61,9 +63,13 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         Intent(applicationContext, LocationService::class.java).apply {
             action = LocationService.ACTION_STOP
-            startService(this)
+            startForegroundService(this)
         }
         super.onDestroy()
         binding = null
+    }
+    override fun onStop() {
+        super.onStop()
+        Log.d("MyApp", "Application stopped")
     }
 }

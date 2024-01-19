@@ -8,6 +8,6 @@ data class RestaurantListModel(
     val restaurantCategory: String,
     val restaurantId: Int,
     val restaurantName: String,
-    val stars: Int,
+    val stars: Double,
     val tableModels: List<TableModel>
 )

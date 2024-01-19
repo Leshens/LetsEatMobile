@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("api/search")
+    @GET("/api/restaurants/search")
     suspend fun getRestaurants(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,

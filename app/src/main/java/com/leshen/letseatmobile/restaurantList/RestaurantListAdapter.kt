@@ -18,14 +18,15 @@ class RestaurantListAdapter(
     private val favoriteStates = mutableMapOf<Int, Boolean>()
     private val sizeCountMap = mutableMapOf<Int, Int>()
 
-    fun updateData(newList: List<RestaurantListModel>) {
-        filteredList = newList
+    fun updateData(newList: List<RestaurantListModel>?) {
+        filteredList = newList ?: emptyList()
         countTableSizes()
         notifyDataSetChanged()
     }
 
+
     fun filterByCategory(category: String) {
-        filteredList = if (category.isNotEmpty()) {
+        filteredList = if (filteredList != null && category.isNotEmpty()) {
             filteredList.filter { it.restaurantCategory == category }
         } else {
             filteredList
@@ -37,12 +38,15 @@ class RestaurantListAdapter(
     private fun countTableSizes() {
         sizeCountMap.clear()
 
-        // Use groupingBy and eachCount to count occurrences of each size value
-        sizeCountMap.putAll(filteredList.flatMap { it.tableModels }
-            .groupingBy { it.size }
-            .eachCount())
+        filteredList?.let { list ->
+            list.flatMap { it.tableModels.orEmpty() }
+                .groupingBy { it.size }
+                .eachCount()
+                .forEach { (size, count) ->
+                    sizeCountMap[size] = count
+                }
+        }
     }
-
     interface OnItemClickListener {
         fun onItemClick(restaurantListModel: RestaurantListModel)
         fun onFavoriteButtonClick(restaurantId: Int)
@@ -108,10 +112,13 @@ class RestaurantListAdapter(
         return filteredList.size
     }
 
-    private fun generateSizeText(tableModels: List<TableModel>): String {
-        // Use groupingBy and eachCount to generate the size text
-        return tableModels.groupingBy { it.size }
+    private fun generateSizeText(tableModels: List<TableModel>?): String {
+        return tableModels.orEmpty()
+            .groupingBy { it.size }
             .eachCount()
-            .entries.joinToString("\n") { (size, count) -> "$count stolik/i($size os.)" }
+            .entries.joinToString("\n") { (size, count) ->
+                val sizeCount = sizeCountMap[size] ?: 0
+                "$count stolik/i($size os.)"
+            }
     }
 }

@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -36,14 +38,20 @@ class HomeViewModel : ViewModel() {
                 val longitude = _longitude.value ?: 0.0
                 val radius = _selectedRange.value ?: 0
 
-                // Log the HTTP request URL with parameters
-                val requestUrl = "http://31.179.139.182:690/api/search" +
-                        "?latitude=$latitude&longitude=$longitude&radius=$radius"
-                Log.d("HTTP_REQUEST", "Fetching data from API - URL: $requestUrl")
+                // Dodaj interceptor do logowania URL-ów zapytań
+                val loggingInterceptor = HttpLoggingInterceptor { message ->
+                    Log.d("HTTP_LOG", message)
+                }
+                loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .build()
 
                 val apiService = Retrofit.Builder()
-                    .baseUrl("http://31.179.139.182:690/")
+                    .baseUrl("http://31.179.139.182:690")
                     .addConverterFactory(GsonConverterFactory.create())
+                    .client(client) // Ustaw klienta z intercepotrem
                     .build()
                     .create(ApiService::class.java)
 
@@ -53,14 +61,20 @@ class HomeViewModel : ViewModel() {
                     radius = radius
                 )
 
-                // Log the HTTP response
                 Log.d("HTTP_RESPONSE", "Received data from API: $restaurants")
 
                 _restaurants.value = restaurants
 
+            } catch (e: retrofit2.HttpException) {
+                if (e.code() == 404) {
+                    Log.e("HTTP_ERROR_404", "Resource not found (HTTP 404)", e)
+                    // Handle 404 error appropriately
+                } else {
+                    Log.e("HTTP_ERROR_Else", "HTTP error: ${e.code()}", e)
+                    // Handle other HTTP errors
+                }
             } catch (e: Exception) {
-                // Log any errors
-                Log.e("HTTP_ERROR", "Error fetching data from API", e)
+                Log.e("HTTP_ERROR_OTHER", "Error fetching data from API", e)
             }
         }
     }
