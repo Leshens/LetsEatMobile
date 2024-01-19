@@ -164,7 +164,31 @@ Miska Mocy z Quinoa\n
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/restaurantPanelRating"
+                    android:id="@+id/restaurantPanelFood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableLeftCompat="@drawable/baseline_star_24"
+
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelAtmosphere"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableLeftCompat="@drawable/baseline_star_24"
+
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

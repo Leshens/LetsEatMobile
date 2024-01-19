@@ -61,7 +61,7 @@ class HomeViewModel : ViewModel() {
                     radius = radius
                 )
 
-                Log.d("HTTP_RESPONSE", "Received data from API: $restaurants")
+                Log.d("HTTP_RESPONSE_LOG", "Received data from API: $restaurants")
 
                 _restaurants.value = restaurants
 
