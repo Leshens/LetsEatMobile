@@ -47,12 +47,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.signOut(this, auth)
     }
 
-    fun openWebsite() {
-        val url = "https://www.kamelia.pl"
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
-    }
-
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()

@@ -17,8 +17,10 @@ class HomeViewModel : ViewModel() {
     private val _restaurants = MutableLiveData<List<RestaurantListModel>>()
     val restaurants: LiveData<List<RestaurantListModel>> get() = _restaurants
 
-    private val _selectedRange = MutableLiveData<Int>()
-    val selectedRange: LiveData<Int> get() = _selectedRange
+    private val _selectedRange = MutableLiveData<Float>().apply {
+        value = 1.0f
+    }
+    val selectedRange: LiveData<Float> get() = _selectedRange
 
     private val _latitude = MutableLiveData<Double>()
     val latitude: LiveData<Double> get() = _latitude
@@ -27,7 +29,9 @@ class HomeViewModel : ViewModel() {
     val longitude: LiveData<Double> get() = _longitude
 
     init {
-        _selectedRange.value = 1
+        updateLatitude(0.0)
+        updateLongitude(0.0)
+        _selectedRange.value = 1.0f
         fetchDataFromApi()
     }
 
@@ -36,7 +40,7 @@ class HomeViewModel : ViewModel() {
             try {
                 val latitude = _latitude.value ?: 0.0
                 val longitude = _longitude.value ?: 0.0
-                val radius = _selectedRange.value ?: 0
+                val radius = _selectedRange.value ?: 0.0f
 
                 // Dodaj interceptor do logowania URL-ów zapytań
                 val loggingInterceptor = HttpLoggingInterceptor { message ->
@@ -51,7 +55,7 @@ class HomeViewModel : ViewModel() {
                 val apiService = Retrofit.Builder()
                     .baseUrl("http://31.179.139.182:690")
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(client) // Ustaw klienta z intercepotrem
+                    .client(client)
                     .build()
                     .create(ApiService::class.java)
 
@@ -79,12 +83,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun updateSelectedRange(range: Int) {
+    fun updateSelectedRange(range: Float) {
         _selectedRange.value = range
         fetchDataFromApi()
     }
 
-    // Add functions to update latitude and longitude
     fun updateLatitude(latitude: Double) {
         _latitude.value = latitude
         fetchDataFromApi()

@@ -1,5 +1,6 @@
 package com.leshen.letseatmobile.restaurantList
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.leshen.letseatmobile.R
 
 class RestaurantListAdapter(
+    var restaurantList: List<RestaurantListModel>,
     var filteredList: List<RestaurantListModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RestaurantListAdapter.ViewHolder>() {
@@ -19,32 +21,36 @@ class RestaurantListAdapter(
     private val sizeCountMap = mutableMapOf<Int, Int>()
 
     fun updateData(newList: List<RestaurantListModel>?) {
-        filteredList = newList ?: emptyList()
+        restaurantList = newList ?: emptyList()
+        filteredList = restaurantList
         countTableSizes()
         notifyDataSetChanged()
     }
 
 
     fun filterByCategory(category: String) {
-        filteredList = if (filteredList != null && category.isNotEmpty()) {
-            filteredList.filter { it.restaurantCategory == category }
+        filteredList = if (restaurantList.isNotEmpty() && category.isNotEmpty()) {
+            restaurantList.filter { it.restaurantCategory == category }
         } else {
-            filteredList
+            restaurantList
         }
         countTableSizes()
+        notifyDataSetChanged()
+    }
+
+    fun resetFilters() {
+        filteredList = restaurantList
         notifyDataSetChanged()
     }
 
     private fun countTableSizes() {
         sizeCountMap.clear()
 
-        filteredList?.let { list ->
-            list.flatMap { it.tableModels.orEmpty() }
-                .groupingBy { it.size }
-                .eachCount()
-                .forEach { (size, count) ->
-                    sizeCountMap[size] = count
-                }
+        filteredList.forEach { restaurant ->
+            restaurant.tables?.forEach { table ->
+                val size = table.size
+                sizeCountMap[size] = sizeCountMap.getOrDefault(size, 0) + 1
+            }
         }
     }
     interface OnItemClickListener {
@@ -79,10 +85,15 @@ class RestaurantListAdapter(
         // Set data to views
         holder.nameTextView.text = restaurant.restaurantName
         holder.timeTextView.text = restaurant.openingHours
-        holder.starTextView.text = restaurant.stars.toString()
+        if (restaurant.stars == 0.0) {
+            holder.starTextView.text = "Brak ocen"
+        } else {
+            holder.starTextView.text = restaurant.stars.toString()
+        }
 
         // Update tablesTextView with the size and count information
-        val sizeText = generateSizeText(restaurant.tableModels)
+        Log.d("restaurant.table", restaurant.tables?.toString() ?: "tables is null")
+        val sizeText = generateSizeText(restaurant.tables.orEmpty())
         holder.tablesTextView.text = sizeText
 
         // Load the restaurant picture using Glide
@@ -107,18 +118,19 @@ class RestaurantListAdapter(
             favoriteStates[position] = !currentState
         }
     }
-
     override fun getItemCount(): Int {
         return filteredList.size
     }
 
-    private fun generateSizeText(tableModels: List<TableModel>?): String {
-        return tableModels.orEmpty()
-            .groupingBy { it.size }
+    private fun generateSizeText(tableModels: List<Table>?): String {
+        if (tableModels.isNullOrEmpty()) {
+            return "Brak stolików"
+        }
+        return tableModels.groupingBy { it.size }
             .eachCount()
-            .entries.joinToString("\n") { (size, count) ->
+            .entries.joinToString("\n") { (size, _) ->
                 val sizeCount = sizeCountMap[size] ?: 0
-                "$count stolik/i($size os.)"
+                "$sizeCount stolik/i ($size os.)"
             }
     }
 }

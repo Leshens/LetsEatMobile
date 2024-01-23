@@ -9,5 +9,5 @@ data class RestaurantListModel(
     val restaurantId: Int,
     val restaurantName: String,
     val stars: Double,
-    val tableModels: List<TableModel>
+    val tables: List<Table>
 )

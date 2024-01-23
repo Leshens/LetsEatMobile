@@ -24,7 +24,6 @@
         android:textSize="36sp"
         android:textStyle="bold"
         android:layout_marginStart="40dp"
-        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/ivSinUpLogo"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -110,6 +109,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:padding="5dp"
         android:id="@+id/btnSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

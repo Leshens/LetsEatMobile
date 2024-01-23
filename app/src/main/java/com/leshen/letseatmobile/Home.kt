@@ -24,9 +24,9 @@ import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
 import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
+
 import java.util.Locale
 import android.Manifest
-
 
 class Home : Fragment() {
 
@@ -35,7 +35,7 @@ class Home : Fragment() {
     private lateinit var adapter: RestaurantListAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var locationButton: Button
-
+    private var selectedCategory: String? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val viewModel: HomeViewModel by viewModels()
@@ -51,9 +51,9 @@ class Home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
-
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -74,7 +74,7 @@ class Home : Fragment() {
         }
 
         // Pass the item click listener to your adapter
-        adapter = RestaurantListAdapter(emptyList(), itemClickListener)
+        adapter = RestaurantListAdapter(emptyList(), emptyList(), itemClickListener)
         recyclerView.adapter = adapter
 
         filterLayoutHome = binding.filterLayoutHome
@@ -123,9 +123,21 @@ class Home : Fragment() {
             val button = Button(requireContext())
             button.text = category
             button.setOnClickListener {
-                filterByCategory(category)
+                toggleCategoryButton(category)
             }
             filterLayoutHome.addView(button)
+        }
+    }
+
+    private fun toggleCategoryButton(category: String) {
+        if (category == selectedCategory) {
+            // If the button is already selected, reset filters
+            selectedCategory = null
+            adapter.resetFilters()
+        } else {
+            // If a new category is selected, filter by category
+            selectedCategory = category
+            filterByCategory(category)
         }
     }
 
@@ -135,13 +147,11 @@ class Home : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Permission is not granted, request it
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
-            // Permission is already granted, update location
             updateLocationButton()
         }
     }
@@ -175,7 +185,7 @@ class Home : Fragment() {
     private fun showRangeSelectorDialog() {
         val rangeSelectorDialog = RangeSelectorDialogFragment()
         rangeSelectorDialog.setRangeSelectorListener(object : RangeSelectorDialogFragment.RangeSelectorListener {
-            override fun onRangeSelected(range: Int) {
+            override fun onRangeSelected(range: Float) {
                 viewModel.updateSelectedRange(range)
             }
         })

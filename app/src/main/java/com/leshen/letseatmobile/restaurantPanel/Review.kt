@@ -1,6 +1,6 @@
 package com.leshen.letseatmobile.restaurantPanel
 
-data class ReviewModel(
+data class Review(
     val atmosphere: Int,
     val comment: String,
     val date: Any,
@@ -8,5 +8,5 @@ data class ReviewModel(
     val restaurantId: Any,
     val reviewId: Int,
     val service: Int,
-    val token: Long
+    val token: String
 )

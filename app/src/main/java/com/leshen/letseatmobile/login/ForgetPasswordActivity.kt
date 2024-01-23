@@ -31,9 +31,6 @@ class ForgetPasswordActivity : BaseActivity() {
             auth.sendPasswordResetEmail(email).addOnCompleteListener(this){task->
                 if (task.isSuccessful)
                 {
-//                    binding?.tilEmailForgetPassword?.visibility = View.GONE
-//                    binding?.tvSubmitMsg?.visibility = View.VISIBLE
-//                    binding?.btnForgotPasswordSubmit?.visibility = View.GONE
                     hideProgressBar()
                 }
                 else
