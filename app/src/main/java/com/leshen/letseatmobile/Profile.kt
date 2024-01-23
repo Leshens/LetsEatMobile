@@ -1,15 +1,20 @@
 package com.leshen.letseatmobile
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.leshen.letseatmobile.databinding.FragmentProfileBinding
+import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
+import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 
 class Profile : Fragment() {
     private var binding: FragmentProfileBinding? = null
@@ -32,11 +37,21 @@ class Profile : Fragment() {
 
         val myTextView: TextView = view?.findViewById(R.id.helloText) ?: return null
 
+        val joinLetsEatButton: Button = view.findViewById(R.id.joinLetsEat) ?: return null
+
+        // Set click listener for the button
+        joinLetsEatButton.setOnClickListener {
+            val url = "http://31.179.139.182:420"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
+        
         val userInfo = viewModel.getUserInfo(auth)
         myTextView.text = "Hej, ${userInfo.username}"
 
         return view
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -6,36 +6,20 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/rangeValueTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Wybierz zasięg:"
+        android:text=""
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
+    <SeekBar
+        android:id="@+id/rangeSeekBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RadioButton
-            android:id="@+id/radioSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mały (1 Km)"/>
-
-        <RadioButton
-            android:id="@+id/radioMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Średni (2 Km)"/>
-
-        <RadioButton
-            android:id="@+id/radioLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Duży (3 Km)"/>
-    </RadioGroup>
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="0"/>
 
     <Button
         android:id="@+id/buttonApply"

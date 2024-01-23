@@ -85,8 +85,7 @@
             android:paddingRight="10dp"
             android:text="Dołącz do lets eat"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:onClick="openWebsite"/>
+            android:textSize="20sp"/>
     </LinearLayout>
 
 </FrameLayout>

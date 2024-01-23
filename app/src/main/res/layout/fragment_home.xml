@@ -9,6 +9,7 @@
     android:foregroundTint="@color/teal_200"
     tools:context=".Home">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,7 +26,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/locationButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:background="@drawable/rounded_corner"
@@ -46,7 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <!-- Your category buttons will be added here dynamically -->
             </LinearLayout>
 
         </HorizontalScrollView>
@@ -60,7 +60,6 @@
             android:text="Z nami znajdziesz miejsce w restauracji!"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textColor="@color/soft_black"
             android:textSize="20sp"
             android:textStyle="bold" />
 

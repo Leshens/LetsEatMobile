@@ -1,5 +1,6 @@
-package com.leshen.letseatmobile.restautrant
+package com.leshen.letseatmobile.restaurantList
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,31 +11,50 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.leshen.letseatmobile.R
 
-class RestaurantAdapter(
-    var originalList: List<RestaurantModel>,
+class RestaurantListAdapter(
+    var restaurantList: List<RestaurantListModel>,
+    var filteredList: List<RestaurantListModel>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<RestaurantAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RestaurantListAdapter.ViewHolder>() {
 
-    private var filteredList: List<RestaurantModel> = originalList
-    private val favoriteStates = mutableMapOf<Int, Boolean>() // Map to store favorite states by position
+    private val favoriteStates = mutableMapOf<Int, Boolean>()
+    private val sizeCountMap = mutableMapOf<Int, Int>()
 
-    fun updateData(newList: List<RestaurantModel>) {
-        originalList = newList
-        filteredList = originalList
+    fun updateData(newList: List<RestaurantListModel>?) {
+        restaurantList = newList ?: emptyList()
+        filteredList = restaurantList
+        countTableSizes()
         notifyDataSetChanged()
     }
+
 
     fun filterByCategory(category: String) {
-        filteredList = if (category.isNotEmpty()) {
-            originalList.filter { it.restaurantCategory == category }
+        filteredList = if (restaurantList.isNotEmpty() && category.isNotEmpty()) {
+            restaurantList.filter { it.restaurantCategory == category }
         } else {
-            originalList
+            restaurantList
         }
+        countTableSizes()
         notifyDataSetChanged()
     }
 
+    fun resetFilters() {
+        filteredList = restaurantList
+        notifyDataSetChanged()
+    }
+
+    private fun countTableSizes() {
+        sizeCountMap.clear()
+
+        filteredList.forEach { restaurant ->
+            restaurant.tables?.forEach { table ->
+                val size = table.size
+                sizeCountMap[size] = sizeCountMap.getOrDefault(size, 0) + 1
+            }
+        }
+    }
     interface OnItemClickListener {
-        fun onItemClick(restaurantModel: RestaurantModel)
+        fun onItemClick(restaurantListModel: RestaurantListModel)
         fun onFavoriteButtonClick(restaurantId: Int)
     }
 
@@ -65,13 +85,22 @@ class RestaurantAdapter(
         // Set data to views
         holder.nameTextView.text = restaurant.restaurantName
         holder.timeTextView.text = restaurant.openingHours
-        holder.tablesTextView.text = "1 stolik(2 os.) \n2 stolik(4 os.)"
+        if (restaurant.stars == 0.0) {
+            holder.starTextView.text = "Brak ocen"
+        } else {
+            holder.starTextView.text = restaurant.stars.toString()
+        }
+
+        // Update tablesTextView with the size and count information
+        Log.d("restaurant.table", restaurant.tables?.toString() ?: "tables is null")
+        val sizeText = generateSizeText(restaurant.tables.orEmpty())
+        holder.tablesTextView.text = sizeText
 
         // Load the restaurant picture using Glide
         Glide.with(holder.itemView.context)
-            .load(restaurant.photoLink)  // Replace with the actual image URL
-            .placeholder(R.drawable.template_restauracja)  // Placeholder image while loading
-            .error(R.drawable.template_restauracja)  // Image to display in case of an error
+            .load(restaurant.photoLink)
+            .placeholder(R.drawable.template_restauracja)
+            .error(R.drawable.template_restauracja)
             .centerCrop()
             .into(holder.restaurantPictureImageView)
 
@@ -82,18 +111,26 @@ class RestaurantAdapter(
             val currentState = favoriteStates[position] ?: false
 
             if (currentState) {
-                // If the current state is true, change it to false and set the second icon
                 holder.favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
             } else {
-                // If the current state is false, change it to true and set the first icon
                 holder.favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
             }
-            // Update the favorite state for the current position
             favoriteStates[position] = !currentState
         }
     }
-
     override fun getItemCount(): Int {
         return filteredList.size
+    }
+
+    private fun generateSizeText(tableModels: List<Table>?): String {
+        if (tableModels.isNullOrEmpty()) {
+            return "Brak stolików"
+        }
+        return tableModels.groupingBy { it.size }
+            .eachCount()
+            .entries.joinToString("\n") { (size, _) ->
+                val sizeCount = sizeCountMap[size] ?: 0
+                "$sizeCount stolik/i ($size os.)"
+            }
     }
 }

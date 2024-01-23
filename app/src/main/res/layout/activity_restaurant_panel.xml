@@ -25,7 +25,7 @@
                 android:id="@+id/restaurantImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
             <ImageButton
                 android:id="@+id/restaurantPanelReturnButton"
@@ -164,7 +164,7 @@ Miska Mocy z Quinoa\n
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/restaurantPanelRating"
+                    android:id="@+id/restaurantPanelFood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -172,7 +172,28 @@ Miska Mocy z Quinoa\n
                     android:text="4.4 / 5.0"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    app:drawableLeftCompat="@drawable/baseline_star_24"
+
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelAtmosphere"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
 
                     />
 
@@ -183,40 +204,26 @@ Miska Mocy z Quinoa\n
                     android:layout_gravity="center"
                     android:src="@drawable/rounded_corner" />
 
-                <LinearLayout
-                    android:id="@+id/restaurantPanelOpinions"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/restaurantPanelOpinion"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:text="Przykładowa opninia#1"
+                        android:paddingVertical="10dp"/>
+
+                <Button
+                    android:id="@+id/restaurantAddOpinion"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/restaurantPanelOpinion1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Przykładowa opninia#1" />
-
-                    <TextView
-                        android:id="@+id/restaurantPanelOpinion2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Przykładowa opninia#2" />
-
-                    <TextView
-                        android:id="@+id/restaurantPanelOpinion3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Przykładowa opninia#3" />
-                </LinearLayout>
-
+                    android:text="Dodaj Swoją opinię"
+                    android:textAlignment="center" />
             </LinearLayout>
 
         </LinearLayout>
-
-
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
