@@ -1,24 +1,54 @@
-package com.leshen.letseatmobile
-
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.ext.junit.rules.ActivityScenarioRule
+import com.google.firebase.auth.FirebaseAuth
+import com.leshen.letseatmobile.MainActivity
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
+import com.leshen.letseatmobile.R
 
-import org.junit.Assert.*
+class LoginActivityTest {
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-@RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+    @get:Rule
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    private lateinit var auth: FirebaseAuth
+
+    @Before
+    fun setup() {
+        auth = FirebaseAuth.getInstance()
+        // Upewnij się, że użytkownik jest wylogowany przed testem
+        auth.signOut()
+    }
+
+    @After
+    fun cleanup() {
+        // Wyloguj użytkownika po teście, aby przywrócić pierwotny stan
+        auth.signOut()
+    }
+
     @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.leshen.letseatmobile", appContext.packageName)
+    fun testLoginAndLogout() {
+        // Kliknij przycisk "Get Started"
+        onView(withId(R.id.cvGetStarted)).perform(click())
+
+        // Kliknij pole tekstowe "Email" i wpisz adres e-mail
+        onView(withId(R.id.tilEmail)).perform(replaceText("css@gmail.com"))
+
+        // Kliknij pole tekstowe "Password" i wpisz hasło
+        onView(withId(R.id.tilPassword)).perform(replaceText("Karolina123!"))
+
+        // Kliknij przycisk "Sign In"
+        onView(withId(R.id.btnSignIn)).perform(click())
+
+        // Kliknij przycisk "Profile"
+        onView(withId(R.id.profile)).perform(click())
+
+        // Kliknij przycisk "Sign Out"
+        onView(withId(R.id.signOutButton1)).perform(click())
     }
 }
