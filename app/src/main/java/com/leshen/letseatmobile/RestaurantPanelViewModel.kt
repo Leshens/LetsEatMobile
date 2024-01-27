@@ -36,7 +36,8 @@ class RestaurantPanelViewModel : ViewModel() {
 
             // Create a Retrofit instance
             val apiService = Retrofit.Builder()
-                .baseUrl("http://31.179.139.182:690")
+                //.baseUrl("http://31.179.139.182:690")
+                .baseUrl("http://10.0.2.2:8010")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
@@ -86,7 +87,8 @@ class RestaurantPanelViewModel : ViewModel() {
 
             val response = withContext(Dispatchers.IO) {
                 val apiService = Retrofit.Builder()
-                    .baseUrl("http://31.179.139.182:690")
+                    //.baseUrl("http://31.179.139.182:690")
+                    .baseUrl("http://10.0.2.2:8010")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(OkHttpClient())
                     .build()
