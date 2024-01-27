@@ -65,6 +65,8 @@ class Home : Fragment() {
 
                 // Pass any necessary data to the activity
                 intent.putExtra("restaurantId", restaurantModel.restaurantId)
+                intent.putExtra("distance",restaurantModel.distance)
+                Log.d("distance",restaurantModel.distance)
                 startActivity(intent)
             }
 

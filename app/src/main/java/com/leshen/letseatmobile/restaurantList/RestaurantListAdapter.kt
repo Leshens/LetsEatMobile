@@ -84,6 +84,7 @@ class RestaurantListAdapter(
         val restaurant = filteredList[position]
         // Set data to views
         holder.nameTextView.text = restaurant.restaurantName
+        holder.distanceTextView.text = restaurant.distance
         holder.timeTextView.text = restaurant.openingHours
         if (restaurant.stars == 0.0) {
             holder.starTextView.text = "Brak ocen"
@@ -126,11 +127,16 @@ class RestaurantListAdapter(
         if (tableModels.isNullOrEmpty()) {
             return "Brak stolików"
         }
-        return tableModels.groupingBy { it.size }
-            .eachCount()
-            .entries.joinToString("\n") { (size, _) ->
-                val sizeCount = sizeCountMap[size] ?: 0
-                "$sizeCount stolik/i ($size os.)"
-            }
+
+        val sizeCountMap = mutableMapOf<Int, Int>()
+
+        tableModels.forEach { table ->
+            val size = table.size
+            sizeCountMap[size] = sizeCountMap.getOrDefault(size, 0) + 1
+        }
+
+        return sizeCountMap.entries.joinToString("\n") { (size, count) ->
+            "$count stolik/i ($size os.)"
+        }
     }
 }
