@@ -36,24 +36,17 @@ class RestaurantPanelViewModel : ViewModel() {
 
             // Create a Retrofit instance
             val apiService = Retrofit.Builder()
-                //.baseUrl("http://31.179.139.182:690")
-                .baseUrl("http://10.0.2.2:8010")
+                .baseUrl("http://31.179.139.182:690")
+                //.baseUrl("http://10.0.2.2:8010")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
                 .create(ApiService::class.java)
-
-            // Make an API request to get restaurant data
             val restaurant = apiService.getRestaurantPanelData(restaurantId)
-
-            // Log the received data
             Log.d("HTTP_RESPONSE_PANEL", "Received data from API: $restaurant")
-
-            // Update LiveData with the fetched data
             restaurantData.postValue(restaurant)
 
         } catch (e: retrofit2.HttpException) {
-            // Handle HTTP exceptions, such as 404
             if (e.code() == 404) {
                 Log.e("HTTP_ERROR_404", "Resource not found (HTTP 404)", e)
                 errorMessage.postValue("Failed to fetch restaurant details")
@@ -62,7 +55,6 @@ class RestaurantPanelViewModel : ViewModel() {
                 errorMessage.postValue("Failed to fetch restaurant details")
             }
         } catch (e: Exception) {
-            // Handle other exceptions, such as network errors
             Log.e("HTTP_ERROR_OTHER", "Error fetching data from API", e)
             errorMessage.postValue("Failed to connect to the server")
         }
@@ -87,8 +79,8 @@ class RestaurantPanelViewModel : ViewModel() {
 
             val response = withContext(Dispatchers.IO) {
                 val apiService = Retrofit.Builder()
-                    //.baseUrl("http://31.179.139.182:690")
-                    .baseUrl("http://10.0.2.2:8010")
+                    .baseUrl("http://31.179.139.182:690")
+                    //.baseUrl("http://10.0.2.2:8010")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(OkHttpClient())
                     .build()
@@ -99,7 +91,6 @@ class RestaurantPanelViewModel : ViewModel() {
             if (response.isSuccessful) {
                 return "opinia została dodana"
             } else {
-                // Handle specific error responses
                 when (response.code()) {
                     400 -> {
                         // Another review with the same token exists within half a year
