@@ -1,7 +1,11 @@
 package com.leshen.letseatmobile
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -22,11 +26,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
+import com.leshen.letseatmobile.location.LocationService
 import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
-
 import java.util.Locale
-import android.Manifest
 
 class Home : Fragment() {
 
@@ -42,6 +45,8 @@ class Home : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var locationUpdateReceiver: BroadcastReceiver
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 123
@@ -65,6 +70,8 @@ class Home : Fragment() {
 
                 // Pass any necessary data to the activity
                 intent.putExtra("restaurantId", restaurantModel.restaurantId)
+                intent.putExtra("distance", restaurantModel.distance)
+                Log.d("distance", restaurantModel.distance)
                 startActivity(intent)
             }
 
@@ -85,12 +92,26 @@ class Home : Fragment() {
 
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.fetchDataFromApi()
+            updateLocationButton()
         }
 
         locationButton.setOnClickListener {
             checkLocationPermission()
             showRangeSelectorDialog()
         }
+
+        // Initialize the LocationUpdateReceiver
+        locationUpdateReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == "LOCATION_UPDATE_ACTION") {
+                    onLocationUpdate()
+                }
+            }
+        }
+
+        // Register the receiver to listen for location updates
+        val filter = IntentFilter("LOCATION_UPDATE_ACTION")
+        requireContext().registerReceiver(locationUpdateReceiver, filter)
 
         observeViewModel()
 
@@ -131,11 +152,9 @@ class Home : Fragment() {
 
     private fun toggleCategoryButton(category: String) {
         if (category == selectedCategory) {
-            // If the button is already selected, reset filters
             selectedCategory = null
             adapter.resetFilters()
         } else {
-            // If a new category is selected, filter by category
             selectedCategory = category
             filterByCategory(category)
         }
@@ -191,9 +210,14 @@ class Home : Fragment() {
         })
         rangeSelectorDialog.show(parentFragmentManager, "RangeSelectorDialog")
     }
+    private fun onLocationUpdate() {
+        viewModel.fetchDataFromApi()
+        updateLocationButton()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requireContext().unregisterReceiver(locationUpdateReceiver)
         _binding = null
     }
 }

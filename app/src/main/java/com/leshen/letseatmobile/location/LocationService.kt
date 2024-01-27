@@ -28,6 +28,7 @@ class LocationService : Service() {
         const val TAG = "LocationService"
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
+        const val ACTION_UPDATE_LOCATION = "ACTION_UPDATE_LOCATION"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -87,6 +88,9 @@ class LocationService : Service() {
                     "Location: ($lat, $long)"
                 )
                 notificationManager.notify(1, updatedNotification.build())
+
+                // Send location update to Home fragment
+                sendLocationUpdate()
             }
             .launchIn(serviceScope)
 
@@ -98,6 +102,11 @@ class LocationService : Service() {
         Log.d(TAG, "stop: Service stopped")
         stopForeground(true)
         stopSelf()
+    }
+
+    private fun sendLocationUpdate() {
+        val intent = Intent("LOCATION_UPDATE_ACTION")
+        sendBroadcast(intent)
     }
 
     override fun onDestroy() {

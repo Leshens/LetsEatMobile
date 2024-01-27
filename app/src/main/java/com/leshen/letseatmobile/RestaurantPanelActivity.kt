@@ -110,7 +110,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
         }
 
         val distanceTextView: TextView = findViewById(R.id.restaurantPanelRestaurantDistance)
-        distanceTextView.text = "0.3 Km"
+        distanceTextView.text = intent.getStringExtra("distance")
 
         val timeTextView: TextView = findViewById(R.id.restaurantPanelRestaurantTime)
         timeTextView.text = restaurant.openingHours
@@ -122,6 +122,14 @@ class RestaurantPanelActivity : AppCompatActivity() {
         locationTextView.setOnClickListener {
             openMapWithAddress(address)
         }
+
+        val websiteTextView: TextView = findViewById(R.id.restaurantPanelWebsite)
+        websiteTextView.text = restaurant.websiteLink
+        val webaddress = restaurant.websiteLink
+        websiteTextView.setOnClickListener {
+            openWebsite(webaddress)
+        }
+
         val menuTextView: TextView = findViewById(R.id.restaurantPanelMenu)
         menuTextView.text = restaurant.menu?.joinToString("\n") { it.name +" "+ it.price.toString()+" zł"} ?: "brak menu"
 
@@ -169,6 +177,14 @@ class RestaurantPanelActivity : AppCompatActivity() {
             startActivity(mapIntent)
         } else {
             Toast.makeText(this, "Google Maps is not installed", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun openWebsite(webaddress: String) {
+        if (webaddress.isNotEmpty()) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webaddress))
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Pusty adres URL", Toast.LENGTH_SHORT).show()
         }
     }
 }

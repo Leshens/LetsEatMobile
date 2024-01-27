@@ -54,6 +54,7 @@ class HomeViewModel : ViewModel() {
 
                 val apiService = Retrofit.Builder()
                     .baseUrl("http://31.179.139.182:690")
+                    //.baseUrl("http://10.0.2.2:8010")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
