@@ -51,6 +51,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
         val returnButton = findViewById<ImageButton>(R.id.restaurantPanelReturnButton)
         returnButton.setOnClickListener {
             finish()
+
         }
     }
     private fun showReviewDialog() {
