@@ -87,8 +87,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
                         foodRating,
                         serviceRating
                     )
-
-                    // Display the response message as a toast
+                    restaurantPanelViewModel.fetchDataFromApi(restaurantId)
                     Toast.makeText(this@RestaurantPanelActivity, responseMessage, Toast.LENGTH_SHORT).show()
                 }
                 alertDialog.dismiss()
