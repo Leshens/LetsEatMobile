@@ -2,8 +2,6 @@ package com.leshen.letseatmobile
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
-import com.leshen.letseatmobile.restaurantPanel.Menu
-import com.leshen.letseatmobile.restaurantPanel.Review
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -18,9 +16,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
+import org.robolectric.RobolectricTestRunner
 import retrofit2.HttpException
 import retrofit2.Response
-import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class RestaurantPanelViewModelTest {
@@ -33,9 +31,6 @@ class RestaurantPanelViewModelTest {
 
     @Mock
     lateinit var apiService: ApiService
-
-    @Mock
-    lateinit var loggerMock: Logger
 
     @InjectMocks
     lateinit var viewModel: RestaurantPanelViewModel

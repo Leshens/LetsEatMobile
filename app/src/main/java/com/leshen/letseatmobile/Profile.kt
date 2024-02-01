@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.leshen.letseatmobile.databinding.FragmentProfileBinding
-import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
-import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 
 class Profile : Fragment() {
     private var binding: FragmentProfileBinding? = null

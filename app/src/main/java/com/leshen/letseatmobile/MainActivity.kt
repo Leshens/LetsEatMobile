@@ -1,7 +1,6 @@
 package com.leshen.letseatmobile
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -32,7 +31,6 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.home -> replaceFragment(Home())
                 R.id.profile -> replaceFragment(Profile())
-                R.id.favorites -> replaceFragment(Favorites())
             }
             true
         }

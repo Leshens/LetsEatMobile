@@ -1,7 +1,6 @@
 package com.leshen.letseatmobile
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
@@ -36,8 +35,7 @@ class RestaurantPanelViewModel : ViewModel() {
 
             // Create a Retrofit instance
             val apiService = Retrofit.Builder()
-                //.baseUrl("http://31.179.139.182:690")
-                .baseUrl("http://10.0.2.2:8010")
+                .baseUrl("http://31.179.139.182:690")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
@@ -79,8 +77,7 @@ class RestaurantPanelViewModel : ViewModel() {
 
             val response = withContext(Dispatchers.IO) {
                 val apiService = Retrofit.Builder()
-                    //.baseUrl("http://31.179.139.182:690")
-                    .baseUrl("http://10.0.2.2:8010")
+                    .baseUrl("http://31.179.139.182:690")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(OkHttpClient())
                     .build()
@@ -91,18 +88,17 @@ class RestaurantPanelViewModel : ViewModel() {
             if (response.isSuccessful) {
                 return "opinia została dodana"
             } else {
-                when (response.code()) {
+                return when (response.code()) {
                     400 -> {
                         // Another review with the same token exists within half a year
                         val errorResponse = response.errorBody()?.string()
                         val errorMessageJson = JSONObject(errorResponse ?: "")
-                        val errorMessageString =
-                            errorMessageJson.optString("message", "Error submitting review")
-                        return errorMessageString
+                        errorMessageJson.optString("message", "Error submitting review")
                     }
+
                     else -> {
                         errorMessage.postValue("Error submitting review")
-                        return "Error submitting review"
+                        "Error submitting review"
                     }
                 }
             }

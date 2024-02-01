@@ -53,8 +53,7 @@ class HomeViewModel : ViewModel() {
                     .build()
 
                 val apiService = Retrofit.Builder()
-                    //.baseUrl("http://31.179.139.182:690")
-                    .baseUrl("http://10.0.2.2:8010")
+                    .baseUrl("http://31.179.139.182:690")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
@@ -73,10 +72,8 @@ class HomeViewModel : ViewModel() {
             } catch (e: retrofit2.HttpException) {
                 if (e.code() == 404) {
                     Log.e("HTTP_ERROR_404", "Resource not found (HTTP 404)", e)
-                    // Handle 404 error appropriately
                 } else {
                     Log.e("HTTP_ERROR_Else", "HTTP error: ${e.code()}", e)
-                    // Handle other HTTP errors
                 }
             } catch (e: Exception) {
                 Log.e("HTTP_ERROR_OTHER", "Error fetching data from API", e)

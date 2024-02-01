@@ -26,7 +26,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentHomeBinding
-import com.leshen.letseatmobile.location.LocationService
 import com.leshen.letseatmobile.restaurantList.RestaurantListAdapter
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import java.util.Locale
