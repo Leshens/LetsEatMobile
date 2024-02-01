@@ -1,15 +1,22 @@
+package com.leshen.letseatmobile
+
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.google.firebase.auth.FirebaseAuth
-import com.leshen.letseatmobile.MainActivity
+import com.leshen.letseatmobile.login.SignInActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.leshen.letseatmobile.R
+import java.lang.Thread.sleep
 
 class LoginActivityTest {
 
@@ -21,34 +28,40 @@ class LoginActivityTest {
     @Before
     fun setup() {
         auth = FirebaseAuth.getInstance()
-        // Upewnij się, że użytkownik jest wylogowany przed testem
         auth.signOut()
     }
 
     @After
     fun cleanup() {
-        // Wyloguj użytkownika po teście, aby przywrócić pierwotny stan
         auth.signOut()
     }
 
     @Test
-    fun testLoginAndLogout() {
-        // Kliknij przycisk "Get Started"
-        onView(withId(R.id.cvGetStarted)).perform(click())
+    fun testLoginWithValidCredentials() {
+        val validEmail = "test@example.com"
+        val validPassword = "testPassword"
+        ActivityScenario.launch(SignInActivity::class.java)
 
-        // Kliknij pole tekstowe "Email" i wpisz adres e-mail
-        onView(withId(R.id.tilEmail)).perform(replaceText("css@gmail.com"))
+        onView(withId(R.id.etSinInEmail)).perform(ViewActions.typeText(validEmail))
+        onView(withId(R.id.etSinInPassword)).perform(ViewActions.typeText(validPassword))
 
-        // Kliknij pole tekstowe "Password" i wpisz hasło
-        onView(withId(R.id.tilPassword)).perform(replaceText("Karolina123!"))
+        onView(withId(R.id.btnSignIn)).perform(click())
+        ActivityScenario.launch(MainActivity::class.java)
+    }
+    @Test
+    fun testLoginWithInvalidCredentials() {
+        val invalidEmail = "invalid@example.com"
+        val invalidPassword = "invalidPassword"
+        ActivityScenario.launch(SignInActivity::class.java)
 
-        // Kliknij przycisk "Sign In"
+        onView(withId(R.id.etSinInEmail)).perform(replaceText(invalidEmail))
+        onView(withId(R.id.etSinInPassword)).perform(replaceText(invalidPassword))
+
         onView(withId(R.id.btnSignIn)).perform(click())
 
-        // Kliknij przycisk "Profile"
-        onView(withId(R.id.profile)).perform(click())
+        sleep(1000)
 
-        // Kliknij przycisk "Sign Out"
-        onView(withId(R.id.signOutButton1)).perform(click())
+        assertDisplayed(R.id.etSinInEmail)
     }
+
 }

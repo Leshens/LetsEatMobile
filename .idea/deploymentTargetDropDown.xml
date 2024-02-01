@@ -5,10 +5,29 @@
       <entry key="LoginActivityTest">
         <State />
       </entry>
-      <entry key="MainActivityTest">
+      <entry key="app">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="SERIAL_NUMBER" />
+                  <value value="R5CN7192A6X" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-02-01T15:38:49.261220700Z" />
+        </State>
+      </entry>
+      <entry key="testLoginAndLogout()">
         <State />
       </entry>
-      <entry key="app">
+      <entry key="testLoginWithInvalidCredentials()">
+        <State />
+      </entry>
+      <entry key="testLoginWithValidCredentials()">
         <State />
       </entry>
     </value>
